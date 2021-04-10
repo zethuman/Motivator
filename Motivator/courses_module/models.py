@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from auth_.models import MainUser
+from main.models import BaseModel, Certificate
 
 
 class CourseMotivatorManager(models.Manager):
@@ -15,28 +16,10 @@ class ContentMotivatorManager(models.Manager):
     use_in_migrations = True
 
 
-class BaseModel(models.Model):
-    title = models.CharField(max_length=300, blank=True, null=True, verbose_name='Title')
-    description = models.TextField(max_length=1000, blank=True, null=True, verbose_name='Description')
-
-    class Meta:
-        verbose_name = 'Base'
-        verbose_name_plural = 'Bases'
-        abstract = True
-
-    def __str__(self):
-        return self.title
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description
-        }
-
-
 class CourseMotivator(BaseModel):
-    deadline = models.DateField(blank=True, null=True, default=datetime.date.today)
+    deadline = models.DateField(blank=True, null=True, default=datetime.date.today, verbose_name='Deadline')
+    status = models.BooleanField(default=False, verbose_name='Status')
+    rating = models.FloatField(default=0.0, verbose_name='Rating')
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="courses")
 
     objects = CourseMotivatorManager()
@@ -46,9 +29,24 @@ class CourseMotivator(BaseModel):
         verbose_name_plural = 'Courses'
 
 
+class CertificateForCourse(Certificate):
+    course = models.ForeignKey(CourseMotivator, on_delete=models.CASCADE, default=3, related_name="courses_certificate")
+
+    class Meta:
+        verbose_name = 'Course certificate'
+        verbose_name_plural = 'Course certificates'
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'title': self.title
+        }
+
+
 class Content(BaseModel):
-    video = models.FileField()
+    video = models.CharField(max_length=300, blank=True, default='', verbose_name='Videos')
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="contents")
+    course = models.ForeignKey(CourseMotivator, on_delete=models.CASCADE, default=3, related_name="courses_content")
 
     objects = ContentMotivatorManager()
 
@@ -56,10 +54,3 @@ class Content(BaseModel):
         verbose_name = 'Content'
         verbose_name_plural = 'Contents'
 
-
-class Certificate(BaseModel):
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="certificates")
-
-    class Meta:
-        verbose_name = 'Certificate'
-        verbose_name_plural = 'Certificates'

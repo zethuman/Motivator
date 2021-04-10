@@ -1,8 +1,10 @@
 import datetime
 
+from django.db.models import F
 from rest_framework import serializers
 
 from books_module.models import BookMotivator, Essay
+from main.models import Profile
 
 
 def is_13_isbn(value):
@@ -11,12 +13,16 @@ def is_13_isbn(value):
         raise serializers.ValidationError('Please enter 13-digit ISBN')
 
 
+def add_points(self):
+    Profile.objects.filter(user_id=self.data['user_id']).update(points=F('points') + 10000)
+
+
 class BookSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField()
     isbn = serializers.CharField(validators=[is_13_isbn])
     pages = serializers.IntegerField()
-    created = serializers.DateField(read_only=True)
+    created = serializers.DateTimeField(read_only=True)
     deadline = serializers.DateField()
     user_id = serializers.IntegerField(write_only=True)
 
@@ -47,7 +53,6 @@ class BookSerializer(serializers.Serializer):
 
 class BookDetailSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
-    created = serializers.DateField(read_only=True)
 
     class Meta:
         model = BookMotivator
@@ -59,9 +64,10 @@ class EssaySerializer(serializers.Serializer):
     title = serializers.CharField()
     essay = serializers.CharField()
     books_id = serializers.IntegerField(write_only=True)
-    user_id = serializers.IntegerField(write_only=True)
+    user_id = serializers.IntegerField()
 
     def create(self, validated_data):
+        add_points(self)
         essay = Essay.objects.create(
             title=validated_data.get('title'),
             essay=validated_data.get('essay'),

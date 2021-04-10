@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth_/', include('auth_.urls')),
     path('api/books_module/', include('books_module.urls')),
+    path('api/courses_module/', include('courses_module.urls')),
+    path('api/volunteer_module/', include('volunteering_module.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

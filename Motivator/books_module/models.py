@@ -1,27 +1,23 @@
 import datetime
-
 from django.db import models
-from rest_framework.generics import get_object_or_404
-
 from auth_.models import MainUser
+from main.models import BaseModel
 
 
 class BookMotivatorManager(models.Manager):
     use_in_migrations = True
 
-    # def progress_bar(self, pk):
-    #     return self.filter(pages__gt=10).count()
+    def duration(self):
+        return datetime.datetime.now() - self.created
 
 
 class EssayMotivatorManager(models.Manager):
     use_in_migrations = True
 
 
-class BookMotivator(models.Model):
-    title = models.CharField(max_length=300, blank=True, null=True, verbose_name='Title')
+class BookMotivator(BaseModel):
     isbn = models.CharField(max_length=30, blank=True, null=True, verbose_name='ISBN')
     pages = models.PositiveIntegerField(default=0, verbose_name='Pages')
-    created = models.DateField(blank=True, null=True, default=datetime.date.today)
     deadline = models.DateField(blank=True, null=True, default=datetime.date.today)
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="books")
 
@@ -43,8 +39,7 @@ class BookMotivator(models.Model):
         }
 
 
-class Essay(models.Model):
-    title = models.CharField(max_length=300, blank=True, null=True, verbose_name='Title')
+class Essay(BaseModel):
     essay = models.TextField(max_length=1000, blank=True)
     books = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, default=3, related_name="books")
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="essays")

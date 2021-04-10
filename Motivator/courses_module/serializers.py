@@ -1,8 +1,6 @@
 import datetime
 
 from rest_framework import serializers
-
-from books_module.models import BookMotivator, Essay
 from courses_module.models import CourseMotivator, Content, Certificate
 
 

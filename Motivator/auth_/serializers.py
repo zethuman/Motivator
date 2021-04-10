@@ -15,3 +15,5 @@ class PasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainUser
         fields = ('email', 'password')
+
+

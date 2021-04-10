@@ -21,6 +21,7 @@ class CreateUserViewSet(viewsets.ModelViewSet):
         queryset.save()
         return Response(user, status=status.HTTP_201_CREATED)
 
+
 # class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 #     # Allow only authenticated users to access this url
 #     permission_classes = (IsAuthenticated,)

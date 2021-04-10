@@ -39,10 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_jwt',
+    'django_extensions',
+    'django_filters',
     'auth_',
     'main',
+    'volunteering_module',
     'books_module',
-    'courses_module'
+    'courses_module',
 ]
 
 MIDDLEWARE = [
@@ -114,6 +117,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAdminUser',
     ),
+    # 'DEFAULT_FILTER_BACKENDS': (
+    #   'django_filters.rest_framework.DjangoFilterBackend'
+    # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -147,3 +153,8 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}

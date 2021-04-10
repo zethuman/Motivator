@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
+
 from utils.constants import USER_ROLES, USER_ROLE_EMPLOYEE
 from django.core.validators import FileExtensionValidator
 
@@ -58,14 +59,3 @@ class MainUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Employees'
 
 
-class Profile(models.Model):
-    short_bio = models.TextField(max_length=500, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    resume = models.FileField(validators=[
-        FileExtensionValidator(allowed_extensions=['pdf', 'doc'])
-    ])
-    user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Profile'
-        verbose_name_plural = 'Profiles'
