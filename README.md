@@ -2,14 +2,17 @@
 
 Description to this project [here](https://github.com/zethuman/Motivator/blob/main/Motivator%20(Django-project).pdf)
 
+### Contents
+
+1. [Building](#building)
+
 
 ## Building
 ```
 pip install virtualenvwrapper
-mkvirtualenv ***envname***
-workon ***envname***
+mkvirtualenv envname
+workon envname
 pip install -r requirements.txt
-
 ```
 ## Database (PostgreSQL) setup
 
@@ -17,19 +20,22 @@ pip install -r requirements.txt
 2. Start SQL Shell
 3. Enter 5 times ***Enter***
 4. Create database:
- 4a. create database database_name;
- 4b. create user user_name with password 'default';
- 4c. grant all privileges on database database_name to user_name;
- 4d. \q
+   1. create database database_name;
+   2. create user user_name with password 'default';
+   3. grant all privileges on database database_name to user_name;
+   4. \q
 5. Change database settings in settings.py:
  ```
-'ENGINE': 'django.db.backends.postgresql_psycopg2',
-'NAME': 'database_name',
-'USER': 'user_name',
-'PASSWORD': 'default',
-'HOST': 'localhost',
-'PORT': '5432' // If you do not remember in which port your db was launched just go to step 3 and check 
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'database_name',
+        'USER': 'user_name',
+        'PASSWORD': 'default',
+        'HOST': 'localhost',
+        'PORT': '5432' // If you do not remember in which port your db was launched just go to step 3 and check 
+    }
+}
  ```
  6. Makemigrations then migrate
 
@@ -39,7 +45,6 @@ pip install -r requirements.txt
 python manage.py makemigrations
 python manage.my migrate
 python manage.py runserver
-
 ```
 Then visit http://localhost:8000 to view the app.
 
