@@ -84,11 +84,11 @@ DATABASES = {
 
 Link to postman collection is [here](https://www.getpostman.com/collections/9c94f14e25101d806360)
 
-1. Run **Postman**
-2. <kbd>Ctrl</kbd> + <kbd>O</kbd> or **File -> Import**
+1. Run ***Postman***
+2. <kbd>Ctrl</kbd> + <kbd>O</kbd> or ***File -> Import***
 3. Enter tab Link
 4. <kbd>Ctrl</kbd> + <kbd>V</kbd> 
-5. Enter **Continue**
+5. Enter ***Continue***
 
 ## Run
 
@@ -103,5 +103,5 @@ Run [Postman](#postman-import) or visit [localhost](http://localhost:8000) to vi
 ## Get involved!
 
 Master [git repository](https://github.com/zethuman/Motivator/):
- * git clone https://github.com/zethuman/Motivator.git
+ * `git clone git://github.com/zethuman/Motivator.git`
 
