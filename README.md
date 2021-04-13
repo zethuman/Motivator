@@ -4,9 +4,12 @@ Description to this project [here](https://github.com/zethuman/Motivator/blob/ma
 
 ### Contents
 
-1. [Building](#building)
+   * [Building](#building)
+   * [Database setup](#database-setup)
+   * [Run](#run)
+   * [Get Involved](#get-involved)
 
-
+   
 ## Building
 ```
 pip install virtualenvwrapper
@@ -14,7 +17,9 @@ mkvirtualenv envname
 workon envname
 pip install -r requirements.txt
 ```
-## Database (PostgreSQL) setup
+## Database setup
+
+### PostgreSQL example
 
 1. Install PostgreSQL
 2. Start SQL Shell
