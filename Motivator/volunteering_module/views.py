@@ -1,78 +1,70 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics, status
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 
-from courses_module.models import CourseMotivator
-from courses_module.serializers import CourseSerializer, CourseDetailSerializer
-from volunteering_module.models import VolunteerMotivator
-from volunteering_module.serializers import VolunteerSerializer, VolunteerDetailSerializer
+from volunteering_module.models import VolunteerMotivator, CertificateForVolunteer
+from volunteering_module.serializers import VolunteerSerializer, VolunteerDetailSerializer, VolunteerCertificateDetailSerializer, VolunteerCertificateSerializer
 
 
-class VolunteerViewSet(viewsets.ModelViewSet):
+class VolunteerListAPIView(generics.ListCreateAPIView):
     queryset = VolunteerMotivator.objects.all()
+    serializer_class = VolunteerSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class VolunteerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = VolunteerMotivator.objects.all()
+    serializer_class = VolunteerDetailSerializer
+    # BookDetailSerializer.is_valid(raise_exception=True)
+
+
+class CertificateViewSet(viewsets.ModelViewSet):
+    queryset = CertificateForVolunteer.objects.all()
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes = (AllowAny,)
-        elif self.action == 'course_detail':
-            permission_classes = (AllowAny,)
-        else:
+            permission_classes = (IsAuthenticated,)
+        elif self.action == 'create':
+            permission_classes = (IsAuthenticated,)
+        elif self.action == 'update':
+            permission_classes = (IsAuthenticated,)
+        elif self.action == 'destroy':
             permission_classes = (IsAdminUser,)
+        elif self.action == 'certificate_detail_delete':
+            permission_classes = (IsAdminUser,)
+        else:
+            permission_classes = (IsAuthenticated,)
 
         return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return VolunteerSerializer
+            return VolunteerCertificateSerializer
         elif self.action == 'create':
-            return VolunteerSerializer
+            return VolunteerCertificateDetailSerializer
         elif self.action == 'update':
-            return VolunteerDetailSerializer
+            return VolunteerCertificateDetailSerializer
         elif self.action == 'destroy':
-            return VolunteerDetailSerializer
+            return VolunteerCertificateDetailSerializer
 
     @action(methods=['GET'], detail=True, permission_classes=(AllowAny,))
-    def course_detail(self, request, pk):
-        queryset = VolunteerMotivator.objects.filter(id=pk)
-        serializer = VolunteerSerializer(queryset, many=True)
+    def certificate_detail_get(self, request, pk, ek):
+        queryset = VolunteerMotivator.objects.certificates(pk, ek)
+        serializer = VolunteerCertificateDetailSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(methods=['PUT'], detail=True, permission_classes=(AllowAny,))
+    def certificate_detail_update(self, request, pk, ek):
+        queryset = VolunteerMotivator.objects.certificates(pk, ek).first()
+        serializer = VolunteerCertificateDetailSerializer(queryset, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['GET', 'POST'])
-# def photo_by_category(request, pk):
-#     try:
-#         category = Category.objects.get(id=pk)
-#     except Category.DoesNotExist as e:
-#         return Response({'error': str(e)})
-#
-#     if request.method == 'GET':
-#         serializer = PhotoSerializer(category.photos.all(), many=True)
-#         return Response(serializer.data)
-#     elif request.method == 'POST':
-#         serializer = PhotoSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response({'error': serializer.errors},
-#                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# @api_view(['GET', 'POST'])
-# def comment_by_photo(request, pk):
-#     try:
-#         photo = Photo.objects.get(id=pk)
-#     except Photo.DoesNotExist as e:
-#         return Response({'error': str(e)})
-#
-#     if request.method == 'GET':
-#         serializer = CommentSerializer(photo.comments.all(), many=True)
-#         return Response(serializer.data)
-#     elif request.method == 'POST':
-#         serializer = CommentSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response({'error': serializer.errors},
-#                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(methods=['DELETE'], detail=True, permission_classes=(AllowAny,))
+    def certificate_detail_delete(self, request, pk, ek):
+        VolunteerMotivator.objects.certificates(pk, ek).first().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

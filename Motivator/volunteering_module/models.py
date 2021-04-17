@@ -1,5 +1,5 @@
 from django.db import models
-import datetime
+from django.utils import timezone
 from auth_.models import MainUser
 from main.models import BaseModel, Certificate
 
@@ -7,18 +7,14 @@ from main.models import BaseModel, Certificate
 class VolunteerMotivatorManager(models.Manager):
     use_in_migrations = True
 
-    # def progress_bar(self, pk):
-    #     return self.filter(pages__gt=10).count()
-
-
-class CertificateManager(models.Manager):
-    use_in_migrations = True
+    def certificates(self, pk, ek):
+        return self.get(id=pk).volunteers_certificates.filter(id=ek)
 
 
 class VolunteerMotivator(BaseModel):
-    start = models.DateField(blank=True, null=True, default=datetime.date.today, verbose_name='When did it start?')
-    end = models.DateField(blank=True, null=True, default=datetime.date.today, verbose_name='When did it end?')
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="volunteers")
+    start = models.DateField(blank=True, null=True, default=timezone.now, verbose_name='When did it start?')
+    end = models.DateField(blank=True, null=True, default=timezone.now, verbose_name='When did it end?')
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=1, related_name="volunteers")
 
     objects = VolunteerMotivatorManager()
 
@@ -37,9 +33,7 @@ class VolunteerMotivator(BaseModel):
 
 
 class CertificateForVolunteer(Certificate):
-    volunteer = models.ForeignKey(VolunteerMotivator, on_delete=models.CASCADE, default=3, related_name="volunteers_certificates")
-
-    objects = CertificateManager()
+    volunteer = models.ForeignKey(VolunteerMotivator, on_delete=models.CASCADE, default=1, related_name="volunteers_certificates")
 
     class Meta:
         verbose_name = 'Volunteering certificate'

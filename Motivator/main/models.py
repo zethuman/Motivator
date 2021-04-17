@@ -59,22 +59,16 @@ class Certificate(models.Model):
         }
 
 
-class ProfileManager(models.Manager):
-    use_in_migrations = True
-
-
 class Profile(models.Model):
     short_bio = models.TextField(max_length=500, blank=True)
-    birth_date = models.DateField(null=True, blank=True, default=datetime.datetime.now())
+    birth_date = models.DateField(null=True, blank=True, default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     resume = models.FileField(null=True, blank=True, validators=[
         FileExtensionValidator(allowed_extensions=['pdf', 'doc'])
     ])
-    rating = models.FloatField(default=0.0, verbose_name='Rating')
-    points = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(30000)], verbose_name='Points')
+    rating = models.FloatField(default=0.0, validators=[MaxValueValidator(5.0, message="Rating can't be more than 5"), ] ,verbose_name='Rating')
+    points = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(30000, message="Reached maximum points for this quartal")], verbose_name='Points')
     user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
-
-    objects = ProfileManager()
 
     class Meta:
         verbose_name = 'Profile'

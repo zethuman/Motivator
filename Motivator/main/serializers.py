@@ -6,37 +6,39 @@ from main.models import Profile
 from books_module.models import BookMotivator, Essay
 
 
-# def timer(self):
-#     created_on = timezone.now() - self.model('user_id').created_at
-#     print("Now", timezone.now().day)
-#     print("Created date", self.model('user_id').created_at.day)
-#     print("Created date on days", created_on.days)
-#
-#     if created_on.days >= 0:
-#         set_max_value(30000)
-#         print(3000)
-#     pass
-#
-#
-# def set_max_value(value):
-#     return 30000 + value;
+def is_adult_or_old(value):
+    age = timezone.now().year - value.year
+    if age <= 16 and age <= 63:
+        raise serializers.ValidationError('You are not in 16 to 63')
 
-#
-# def time_to_update(value):
-#     if value > set_max_value(0):
-#         raise ValidationError(
-#             ('You reached max points in this quartal'),
-#             params={'value': value},
-#         )
-#
 
-class ProfileSerializer(serializers.ModelSerializer):
+class BaseProfileSerializer(serializers.ModelSerializer):
+    birth_date = serializers.DateField(validators=[is_adult_or_old, ])
+    user_id = serializers.IntegerField(write_only=True)
+
+    class Meta(object):
+        model = Profile
+        fields = '__all__'
+        abstract = True
+
+
+class ProfileSerializer(BaseProfileSerializer):
+
+    class Meta(object):
+        model = Profile
+        fields = ('id', 'short_bio', 'birth_date', 'points', 'user_id')
+
+
+class ProfileDetailSerializer(BaseProfileSerializer):
+
     class Meta(object):
         model = Profile
         fields = '__all__'
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
+    birth_date = serializers.DateField(validators=[is_adult_or_old])
+
     class Meta(object):
         model = Profile
         fields = ['short_bio', 'birth_date', 'rating', 'points',]

@@ -1,52 +1,52 @@
-import datetime
-
 from rest_framework import serializers
-from courses_module.models import CourseMotivator, Content, Certificate
 
-
-class CourseSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = CourseMotivator
-        fields = '__all__'
-
-
-class CourseDetailSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = CourseMotivator
-        fields = '__all__'
+from courses_module.models import CourseMotivator,Content,Certificate,CertificateForCourse
 
 
 class ContentSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
-
     class Meta:
         model = Content
-        fields = '__all__'
+        fields = ['id','title','description','video','user_id','course_id','is_watched']
 
 
 class ContentDetailSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
+    user_id = serializers.IntegerField(write_only = True)
 
     class Meta:
         model = Content
         fields = '__all__'
 
 
-class CertificateSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
+class BaseCertificateSerializer(serializers.ModelSerializer):
+    course_id = serializers.IntegerField(write_only=True)
 
     class Meta:
-        model = Certificate
+        model = CertificateForCourse
+        fields = '__all__'
+        abstract = True
+
+
+class CourseCertificateSerializer(BaseCertificateSerializer):
+    class Meta:
+        model = CertificateForCourse
+        fields = ('id', 'title', 'course_id')
+
+
+class CourseCertificateDetailSerializer(BaseCertificateSerializer):
+    class Meta:
+        model = CertificateForCourse
         fields = '__all__'
 
 
-class CertificateDetailSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
+class CourseSerializer(serializers.ModelSerializer):
+    courses_certificate = CourseCertificateSerializer(many = True)
 
     class Meta:
-        model = Certificate
+        model = CourseMotivator
+        fields = ('id', 'title', 'status', 'courses_certificate', )
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseMotivator
         fields = '__all__'

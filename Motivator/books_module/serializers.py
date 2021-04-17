@@ -23,8 +23,9 @@ class BookSerializer(serializers.Serializer):
     isbn = serializers.CharField(validators=[is_13_isbn])
     pages = serializers.IntegerField()
     created = serializers.DateTimeField(read_only=True)
-    deadline = serializers.DateField()
+    deadline = serializers.DateTimeField()
     user_id = serializers.IntegerField(write_only=True)
+    left = serializers.DateTimeField()
 
     def validate_pages(self, value):
         if value >= 2000 or value <= 0:
@@ -82,7 +83,6 @@ class EssaySerializer(serializers.Serializer):
 
 class EssayDetailSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
-    books_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Essay

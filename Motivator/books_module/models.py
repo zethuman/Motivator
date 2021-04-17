@@ -1,27 +1,35 @@
 import datetime
 from django.db import models
+from django.utils import timezone
+
 from auth_.models import MainUser
 from main.models import BaseModel
 
 
-class BookMotivatorManager(models.Manager):
+class BookMotivatorQuerySet(models.QuerySet):
     use_in_migrations = True
 
-    def duration(self):
-        return datetime.datetime.now() - self.created
+    def get_by_id(self, pk):
+        return self.all().get(id=pk)
+
+    def get_essays_in_book(self, pk, ek):
+        return self.get_by_id(pk).book_essays.filter(id=ek)
 
 
 class EssayMotivatorManager(models.Manager):
     use_in_migrations = True
 
+    def get_by_book(self, books_id):
+        return self.all().filter(book_id=books_id)
+
 
 class BookMotivator(BaseModel):
     isbn = models.CharField(max_length=30, blank=True, null=True, verbose_name='ISBN')
     pages = models.PositiveIntegerField(default=0, verbose_name='Pages')
-    deadline = models.DateField(blank=True, null=True, default=datetime.date.today)
+    deadline = models.DateTimeField(blank=True, null=True, default=timezone.now)
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="books")
 
-    objects = BookMotivatorManager()
+    objects = BookMotivatorQuerySet().as_manager()
 
     class Meta:
         verbose_name = 'Book'
@@ -41,8 +49,8 @@ class BookMotivator(BaseModel):
 
 class Essay(BaseModel):
     essay = models.TextField(max_length=1000, blank=True)
-    books = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, default=3, related_name="books")
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="essays")
+    book = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, default=3, related_name="book_essays")
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=1, related_name="user_essays")
 
     objects = EssayMotivatorManager()
 
@@ -53,7 +61,5 @@ class Essay(BaseModel):
     def to_json(self):
         return {
             'id': self.id,
-            'title': self.title,
-            'user': self.user_id,
-            'book': self.books_id
+            'title': self.title
         }
