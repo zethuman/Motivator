@@ -6,7 +6,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
 
-from utils.constants import USER_ROLES, USER_ROLE_EMPLOYEE
+from utils.constants import USER_ROLES,USER_ROLE_EMPLOYEE,USER_ROLE_HR
 from django.core.validators import FileExtensionValidator
 
 

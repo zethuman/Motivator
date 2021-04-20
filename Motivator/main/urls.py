@@ -8,5 +8,6 @@ urlpatterns = [
     path('profile/<int:pk>/', ProfileViewSet.as_view({'get': 'profile_detail',
                                                       'put': 'update',
                                                       'delete': 'destroy'})),
+    path('profile/myprofile/', ProfileViewSet.as_view({'get': 'my_profile'}))
 
 ]

@@ -1,11 +1,18 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+
+from books_module.models import BookMotivator
+from courses_module.models import CertificateForCourse
 from main.models import Profile
 from main.serializers import ProfileSerializer, PointsSerializer, ProfileUpdateSerializer, ProfileDetailSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
@@ -26,7 +33,7 @@ class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
 
     def get_permissions(self):
         if self.action == 'list':
-            permission_classes=(IsAuthenticated,)
+            permission_classes=(IsAdminUser,)
         elif self.action == 'create':
             permission_classes=(IsAuthenticated,)
         elif self.action == 'update':
@@ -35,6 +42,8 @@ class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
             permission_classes=(IsAdminUser,)
         elif self.action == 'nullify':
             permission_classes=(IsAdminUser,)
+        elif self.action == 'profile_detail':
+            permission_classes=(IsAdminUser, )
         else:
             permission_classes=(IsAuthenticated,)
 
@@ -46,7 +55,13 @@ class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
         else:
             raise PermissionDenied()
 
-    @action(methods=['GET'], detail=True, permission_classes=(IsAuthenticated,))
+    @action(methods = ['GET'], detail = True, permission_classes = (IsAuthenticated,))
+    def my_profile(self, request):
+        queryset = Profile.objects.filter(user_id = request.user.id)
+        serializer = ProfileDetailSerializer(queryset, many = True)
+        return Response(serializer.data)
+
+    @action(methods=['GET'], detail=True, permission_classes=(IsAdminUser,))
     def profile_detail(self, request, pk):
         queryset = Profile.objects.filter(id=pk)
         serializer = ProfileDetailSerializer(queryset, many=True)
@@ -56,4 +71,9 @@ class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
     def nullify(self, request):
         queryset = Profile.objects.update(points=0)
         serializer = PointsSerializer(queryset)
+        logger.debug(f'Points reset user id: {serializer.instance}')
+        logger.info(f'Points reset user id: {serializer.instance}')
+        logger.warning(f'Points reset user id: {serializer.instance}')
+        logger.error(f'Points reset user id:  {serializer.instance}')
+        logger.critical(f'Points reset user id: {serializer.instance}')
         return Response(serializer.data)

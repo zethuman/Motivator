@@ -14,7 +14,7 @@ class VolunteerMotivatorManager(models.Manager):
 class VolunteerMotivator(BaseModel):
     start = models.DateField(blank=True, null=True, default=timezone.now, verbose_name='When did it start?')
     end = models.DateField(blank=True, null=True, default=timezone.now, verbose_name='When did it end?')
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=1, related_name="volunteers")
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, null = True,  related_name="volunteers")
 
     objects = VolunteerMotivatorManager()
 
@@ -33,11 +33,13 @@ class VolunteerMotivator(BaseModel):
 
 
 class CertificateForVolunteer(Certificate):
-    volunteer = models.ForeignKey(VolunteerMotivator, on_delete=models.CASCADE, default=1, related_name="volunteers_certificates")
+    volunteer = models.ForeignKey(VolunteerMotivator, on_delete=models.CASCADE, null = True, related_name="volunteers_certificates")
+    user = models.ForeignKey(MainUser, on_delete = models.CASCADE, null = True, related_name = 'user_volunteer_certificates')
 
     class Meta:
         verbose_name = 'Volunteering certificate'
         verbose_name_plural = 'Volunteering certificates'
+        unique_together = ('volunteer', 'user')
 
     def to_json(self):
         return {

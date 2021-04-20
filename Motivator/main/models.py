@@ -8,6 +8,7 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from auth_.models import MainUser
+import courses_module
 
 
 class BaseModel(models.Model):
@@ -68,7 +69,9 @@ class Profile(models.Model):
     ])
     rating = models.FloatField(default=0.0, validators=[MaxValueValidator(5.0, message="Rating can't be more than 5"), ] ,verbose_name='Rating')
     points = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(30000, message="Reached maximum points for this quartal")], verbose_name='Points')
+    # certificates_for_courses = models.ForeignKey("courses_module.CertificateForCourse", on_delete=models.CASCADE, related_name="user_certificates_for_course", null = True)
     user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
+
 
     class Meta:
         verbose_name = 'Profile'

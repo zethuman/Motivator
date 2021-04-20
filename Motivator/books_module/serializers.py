@@ -1,10 +1,15 @@
 import datetime
+import logging
 
 from django.db.models import F
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from books_module.models import BookMotivator, Essay
 from main.models import Profile
+from main.serializers import PointsSerializer
+
+logger = logging.getLogger(__name__)
 
 
 def is_13_isbn(value):
@@ -14,18 +19,20 @@ def is_13_isbn(value):
 
 
 def add_points(self):
-    Profile.objects.filter(user_id=self.data['user_id']).update(points=F('points') + 10000)
+    if Profile.objects.get(user_id=self.context['request'].user.id).points < 30000:
+        Profile.objects.filter(user_id=self.context['request'].user.id).update(points=F('points') + 5000)
+    else:
+        raise serializers.ValidationError("Reached maximum points of 30000")
 
 
 class BookSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
+    description = serializers.CharField()
     title = serializers.CharField()
     isbn = serializers.CharField(validators=[is_13_isbn])
     pages = serializers.IntegerField()
-    created = serializers.DateTimeField(read_only=True)
-    deadline = serializers.DateTimeField()
-    user_id = serializers.IntegerField(write_only=True)
-    left = serializers.DateTimeField()
+    deadline = serializers.DateField()
+    user_id = serializers.IntegerField(read_only = True)
 
     def validate_pages(self, value):
         if value >= 2000 or value <= 0:
@@ -41,19 +48,24 @@ class BookSerializer(serializers.Serializer):
     def create(self, validated_data):
         book = BookMotivator.objects.create(
             title=validated_data.get('title'),
+            description=validated_data.get('description'),
             isbn=validated_data.get('isbn'),
             pages=validated_data.get('pages'),
             deadline=validated_data.get('deadline'),
-            user_id=validated_data.get('user_id')
+            user_id=self.context['request'].user.id
         )
         return book
+        logger.debug(f'Book created ID: {validated_data[id]}')
+        logger.info(f'Book created ID: {validated_data[id]}')
+        logger.warning(f'Book created ID: {validated_data[id]}')
+        logger.error(f'Book created ID: {validated_data[id]}')
+        logger.critical(f'Book created ID: {validated_data[id]}')
 
     def update(self, instance, validated_data):
         pass
 
 
 class BookDetailSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = BookMotivator
@@ -62,19 +74,21 @@ class BookDetailSerializer(serializers.ModelSerializer):
 
 class EssaySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
+    description = serializers.CharField()
     title = serializers.CharField()
     essay = serializers.CharField()
-    books_id = serializers.IntegerField(write_only=True)
-    user_id = serializers.IntegerField()
+    book_id = serializers.IntegerField(write_only = True)
+    user_id = serializers.IntegerField(read_only = True)
 
     def create(self, validated_data):
-        add_points(self)
         essay = Essay.objects.create(
             title=validated_data.get('title'),
             essay=validated_data.get('essay'),
-            books_id=validated_data.get('books_id'),
-            user_id=validated_data.get('user_id')
+            book_id = self.context['request'].parser_context['kwargs']['pk'],
+            user_id=self.context['request'].user.id
+            # self.context['request'].user.id
         )
+        add_points(self)
         return essay
 
     def update(self, instance, validated_data):

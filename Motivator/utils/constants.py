@@ -6,15 +6,3 @@ USER_ROLES = (
     (USER_ROLE_EMPLOYEE, 'employee'),
     (USER_ROLE_HR, 'hr'),
 )
-
-# TYPE_BULLET = 'BULLET'
-# TYPE_FOOD = 'FOOD'
-# TYPE_TRAVEL = 'TRAVEL'
-# TYPE_SPORT = 'SPORT'
-# TYPE = (
-#     (TYPE_BULLET, 'BULLET'),
-#     (TYPE_FOOD, 'FOOD'),
-#     (TYPE_TRAVEL, 'TRAVEL'),
-#     (TYPE_SPORT, 'SPORT')
-
-# )

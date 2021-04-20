@@ -115,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.IsAdminUser',
     ),
     # 'DEFAULT_FILTER_BACKENDS': (
     #   'django_filters.rest_framework.DjangoFilterBackend'
@@ -157,4 +156,54 @@ MEDIA_URL = '/media/'
 GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
+}
+
+
+LOGGING = {
+    # 'version': 1,
+    # 'disable_existing_loggers': True,
+    # 'debug': True,
+    # 'formatters': {
+    #     'verbose': {
+    #         'format': '%(levelname)s -- %(asctime)s: %(message)s',
+    #     },
+    #     'simple': {
+    #         'format': '%(levelname)s -- %(message)s'
+    #     }
+    # },
+    # 'handlers': {
+    #     'file_handler': {
+    #         'level': 'INFO',
+    #         'class': 'logging.FileHandler',
+    #         'filename': 'test_main.log',
+    #         'formatter': 'verbose'
+    #     },
+    #     'console_handler': {
+    #         'level': 'DEBUG',
+    #         'class': 'logging.StreamHandler',
+    #         'formatter': 'simple'
+    #     }
+    # },
+    # 'loggers': {
+    #     'main': {
+    #         'handlers': ['file_handler', 'console_handler'],
+    #         'level': 'DEBUG',
+    #     },
+    #     'auth_': {
+    #         'handlers': ['console_handler'],
+    #         'level': 'DEBUG',
+    #     },
+    #     # 'books_module': {
+    #     #     'handlers': ['console_handler'],
+    #     #     'level': 'DEBUG',
+    #     # },
+    #     'courses_module': {
+    #         'handlers': ['console_handler'],
+    #         'level': 'DEBUG',
+    #     },
+    #     'volunteering_module': {
+    #         'handlers': ['console_handler'],
+    #         'level': 'DEBUG',
+    #     },
+    # },
 }

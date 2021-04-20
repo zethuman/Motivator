@@ -26,8 +26,9 @@ class EssayMotivatorManager(models.Manager):
 class BookMotivator(BaseModel):
     isbn = models.CharField(max_length=30, blank=True, null=True, verbose_name='ISBN')
     pages = models.PositiveIntegerField(default=0, verbose_name='Pages')
-    deadline = models.DateTimeField(blank=True, null=True, default=timezone.now)
+    deadline = models.DateField(blank=True, null=True, default=timezone.now)
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=3, related_name="books")
+    counter = models.IntegerField(verbose_name = 'Counter', default = 0)
 
     objects = BookMotivatorQuerySet().as_manager()
 
@@ -49,8 +50,8 @@ class BookMotivator(BaseModel):
 
 class Essay(BaseModel):
     essay = models.TextField(max_length=1000, blank=True)
-    book = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, default=3, related_name="book_essays")
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=1, related_name="user_essays")
+    book = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, related_name="book_essays")
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, null = True, related_name="user_essays")
 
     objects = EssayMotivatorManager()
 

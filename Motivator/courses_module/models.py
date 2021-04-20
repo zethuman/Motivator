@@ -49,11 +49,13 @@ class CourseMotivator(BaseModel):
 
 
 class CertificateForCourse(Certificate):
-    course = models.ForeignKey(CourseMotivator, on_delete=models.CASCADE, default=1, related_name="courses_certificate")
+    course = models.ForeignKey(CourseMotivator, on_delete=models.CASCADE, related_name="courses_certificate")
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, null = True, related_name = 'user_course_certificates')
 
     class Meta:
         verbose_name = 'Course certificate'
         verbose_name_plural = 'Course certificates'
+        unique_together = ('course', 'user')
 
     def to_json(self):
         return {
@@ -64,9 +66,8 @@ class CertificateForCourse(Certificate):
 
 class Content(BaseModel):
     video = models.CharField(max_length=300, blank=True, default='', verbose_name='Videos')
-    user = models.ForeignKey(MainUser, on_delete=models.CASCADE, default=1, related_name="contents")
+    user = models.ManyToManyField(MainUser, related_name="contents")
     course = models.ForeignKey(CourseMotivator, on_delete=models.CASCADE, default=1, related_name="courses_content")
-    is_watched = models.BooleanField(default=False, verbose_name='Is Watched?')
 
     objects = ContentMotivatorManager()
 

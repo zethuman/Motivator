@@ -1,6 +1,7 @@
 import datetime
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from books_module.models import BookMotivator, Essay
 from courses_module.models import CourseMotivator, Content, Certificate
@@ -20,7 +21,7 @@ class VolunteerSerializer(BaseVolunteerSerializer):
 
     class Meta:
         model = VolunteerMotivator
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'description', 'start', 'end', 'user', )
 
 
 class VolunteerDetailSerializer(BaseVolunteerSerializer):
@@ -42,10 +43,20 @@ class BaseCertificateSerializer(serializers.ModelSerializer):
 class VolunteerCertificateSerializer(BaseCertificateSerializer):
     class Meta:
         model = CertificateForVolunteer
-        fields = ('id', 'title', 'volunteer_id')
+        fields = ('id', 'title', 'volunteer')
 
 
 class VolunteerCertificateDetailSerializer(BaseCertificateSerializer):
+    created = serializers.DateTimeField(read_only = True)
+    updated = serializers.DateTimeField(read_only = True)
+    user_id = serializers.IntegerField(write_only = True)
+
     class Meta:
         model = CertificateForVolunteer
-        fields = '__all__'
+        fields = ('id', 'volunteer_id', 'title', 'number', 'file', 'created', 'updated', 'user_id')
+        validators = [
+            UniqueTogetherValidator(
+                queryset = CertificateForVolunteer.objects.all(),
+                fields = ('volunteer_id', 'user_id')
+            )
+        ]
