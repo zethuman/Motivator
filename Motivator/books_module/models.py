@@ -1,4 +1,6 @@
 import datetime
+
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
 
@@ -15,12 +17,18 @@ class BookMotivatorQuerySet(models.QuerySet):
     def get_essays_in_book(self, pk, ek):
         return self.get_by_id(pk).book_essays.filter(id=ek)
 
+    def get_user_by_essay(self, ek):
+        return self.get(id=ek).user
+
 
 class EssayMotivatorManager(models.Manager):
     use_in_migrations = True
 
     def get_by_book(self, books_id):
         return self.all().filter(book_id=books_id)
+
+    def get_by_book_by_user(self, books_id, user_id):
+        return self.get_by_book(books_id).filter(user_id=user_id)
 
 
 class BookMotivator(BaseModel):
@@ -49,7 +57,9 @@ class BookMotivator(BaseModel):
 
 
 class Essay(BaseModel):
-    essay = models.TextField(max_length=1000, blank=True)
+    essay = models.FileField(upload_to = 'essays', null=True, blank=True, validators=[
+        FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'jpg', 'png', 'jpeg'])
+    ])
     book = models.ForeignKey(BookMotivator, on_delete=models.CASCADE, null=True, related_name="book_essays")
     user = models.ForeignKey(MainUser, on_delete=models.CASCADE, null = True, related_name="user_essays")
 

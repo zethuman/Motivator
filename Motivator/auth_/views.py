@@ -2,7 +2,7 @@ import logging
 
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 
 from auth_.models import MainUser
@@ -14,12 +14,13 @@ logger = logging.getLogger(__name__)
 
 class CreateUserViewSet(viewsets.ModelViewSet):
     queryset = MainUser.objects.all()
+    permission_classes = (AllowAny, )
 
     def get_serializer_class(self):
         if self.action == 'create':
             return UserSerializer
 
-    @action(methods=['POST'], detail=False, permission_classes=(AllowAny,))
+    @action(methods=['POST'], detail=False, permission_classes = AllowAny )
     def post_user(self, request):
         user = request.data
         queryset = MainUser.objects.create_user(email=user['email'], password=user['password'], first_name=user['first_name'], last_name=user['last_name'], role=user['role'])

@@ -5,11 +5,11 @@ from courses_module.models import CourseMotivator,Content,Certificate,Certificat
 
 
 class ContentSerializer(serializers.ModelSerializer):
-    course_id = serializers.IntegerField(write_only = True)
+    # course_id = serializers.IntegerField(write_only = True)
 
     class Meta:
         model = Content
-        fields = ['id', 'title', 'description', 'video', 'course_id', ]
+        fields = ['id', 'title', 'description', 'video', ]
 
 
 class ContentDetailSerializer(serializers.ModelSerializer):

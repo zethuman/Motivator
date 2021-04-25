@@ -11,6 +11,7 @@ urlpatterns = [
     path('courses/<int:pk>/contents/<int:ek>/', content_by_course),
 
     path('courses/<int:pk>/certificates/', CertificateViewSet.as_view({'get': 'list','post': 'create'})),
+    path('courses/<int:pk>/mycertificates/', CertificateViewSet.as_view({'get': 'list','post': 'create'})),
     path('courses/<int:pk>/certificates/<int:ek>/', CertificateViewSet.as_view({'get': 'certificate_detail_get',
                                                                                  'put': 'certificate_detail_update',
                                                                                  'delete': 'certificate_detail_delete'})),

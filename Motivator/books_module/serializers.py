@@ -18,13 +18,6 @@ def is_13_isbn(value):
         raise serializers.ValidationError('Please enter 13-digit ISBN')
 
 
-def add_points(self):
-    if Profile.objects.get(user_id=self.context['request'].user.id).points < 30000:
-        Profile.objects.filter(user_id=self.context['request'].user.id).update(points=F('points') + 5000)
-    else:
-        raise serializers.ValidationError("Reached maximum points of 30000")
-
-
 class BookSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField()
@@ -76,19 +69,17 @@ class EssaySerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     description = serializers.CharField()
     title = serializers.CharField()
-    essay = serializers.CharField()
-    book_id = serializers.IntegerField(write_only = True)
+    essay = serializers.FileField()
     user_id = serializers.IntegerField(read_only = True)
 
     def create(self, validated_data):
         essay = Essay.objects.create(
             title=validated_data.get('title'),
+            description=validated_data.get('description'),
             essay=validated_data.get('essay'),
             book_id = self.context['request'].parser_context['kwargs']['pk'],
             user_id=self.context['request'].user.id
-            # self.context['request'].user.id
         )
-        add_points(self)
         return essay
 
     def update(self, instance, validated_data):

@@ -1157,6 +1157,7 @@ UC/10
     </table>
     <table id="61" parent="22" name="books_module_essay">
       <ObjectId>33837</ObjectId>
+      <Outdated>1</Outdated>
       <Owner>rakhat</Owner>
       <StateNumber>1445</StateNumber>
     </table>

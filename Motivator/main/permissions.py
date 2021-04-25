@@ -5,8 +5,15 @@ from utils.constants import USER_ROLE_HR,USER_ROLE_EMPLOYEE,USER_ROLE_SUPER_USER
 
 
 class HrPermission(IsAuthenticated):
+    message = "You are not staff"
+
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.role == USER_ROLE_HR
+        if request.method == 'GET':
+            return super().has_permission(request, view) and request.user.role == USER_ROLE_HR or request.user.role == USER_ROLE_SUPER_USER
+        if request.method == 'DELETE':
+            return super().has_permission(request, view) and request.user.role == USER_ROLE_SUPER_USER
+        else:
+            return True
 
 
 class EmployeePermission(IsAuthenticated):
@@ -37,7 +44,11 @@ class CurrentUserPermission(IsAuthenticated, ):
     message = "You can not change information about others"
 
     def has_permission(self, request, view):
-        return super().has_permission(request, view) and view.queryset.model('user_id').user_id == request.user.pk
+        if request.method == 'GET':
+            return True
+        else:
+            return super().has_permission(request, view) and view.queryset.model('user_id').user_id == request.user.pk
+
 
 
 # class ConstraintPermission(IsAuthenticated, ):

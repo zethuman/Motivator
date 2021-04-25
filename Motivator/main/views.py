@@ -4,11 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import FormParser,JSONParser,MultiPartParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-
-from books_module.models import BookMotivator
-from courses_module.models import CertificateForCourse
 from main.models import Profile
 from main.serializers import ProfileSerializer, PointsSerializer, ProfileUpdateSerializer, ProfileDetailSerializer
 
@@ -17,14 +15,13 @@ logger = logging.getLogger(__name__)
 
 class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
     queryset = Profile.objects.all()
+    parser_classes = [FormParser, MultiPartParser, JSONParser]
 
     def is_host_user(self, request, *args, **kwargs):
         return self.get_object().user.pk == self.request.user.pk
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return ProfileSerializer
-        elif self.action == 'create':
             return ProfileSerializer
         elif self.action == 'update':
             return ProfileUpdateSerializer
@@ -34,8 +31,6 @@ class ProfileViewSet(viewsets.ModelViewSet, LoginRequiredMixin):
     def get_permissions(self):
         if self.action == 'list':
             permission_classes=(IsAdminUser,)
-        elif self.action == 'create':
-            permission_classes=(IsAuthenticated,)
         elif self.action == 'update':
             permission_classes=(IsAuthenticated,)
         elif self.action == 'destroy':

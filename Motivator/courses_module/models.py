@@ -30,6 +30,9 @@ class CourseMotivatorQuerySet(models.QuerySet):
     def certificates(self, pk, ek):
         return self.get(id=pk).courses_certificate.filter(id=ek)
 
+    def my_certificates(self, pk, ek, uk):
+        return self.certificates(pk, ek).get(user_id = uk)
+
 
 class ContentMotivatorManager(models.Manager):
     use_in_migrations = True

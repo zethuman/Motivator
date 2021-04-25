@@ -1,15 +1,10 @@
-import datetime
-
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-
-from books_module.models import BookMotivator, Essay
-from courses_module.models import CourseMotivator, Content, Certificate
 from volunteering_module.models import VolunteerMotivator, CertificateForVolunteer
 
 
 class BaseVolunteerSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True)
+    user_id = serializers.IntegerField(write_only = True)
 
     class Meta:
         model = VolunteerMotivator

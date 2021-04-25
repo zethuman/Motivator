@@ -1,14 +1,12 @@
 import logging
-
 from django.db.models import F
 from rest_framework import viewsets, generics, status
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied,ValidationError
+from rest_framework.parsers import FormParser,JSONParser,MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
-
 from main.models import Profile
-from main.permissions import CurrentUserPermission
 from volunteering_module.models import VolunteerMotivator, CertificateForVolunteer
 from volunteering_module.serializers import VolunteerSerializer, VolunteerDetailSerializer, VolunteerCertificateDetailSerializer, VolunteerCertificateSerializer
 
@@ -45,8 +43,8 @@ class VolunteerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CertificateViewSet(viewsets.ModelViewSet):
-
     queryset = CertificateForVolunteer.objects.all()
+    parser_classes = [FormParser,MultiPartParser,JSONParser]
 
     def get_permissions(self):
         if self.action == 'list':
@@ -80,10 +78,12 @@ class CertificateViewSet(viewsets.ModelViewSet):
 
     @action(methods = ['POST'], detail = True, permission_classes = (IsAuthenticated,))
     def certificate_create(self, request, pk=None):
+        request.data['user_id'] = self.request.user.pk
+        request.data['volunteer_id'] = pk
         serializer = VolunteerCertificateDetailSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            update_points(uk = request.user.id)
+            # update_points(uk = request.user.id)
             return Response(serializer.data)
         else:
             return Response(serializer.errors,
@@ -92,6 +92,7 @@ class CertificateViewSet(viewsets.ModelViewSet):
     @action(methods=['PUT'], detail=True, permission_classes=(AllowAny,))
     def certificate_detail_update(self, request, pk, ek):
         queryset = VolunteerMotivator.objects.certificates(pk, ek).first()
+        request.data['volunteer_id'] = pk
         serializer = VolunteerCertificateDetailSerializer(queryset, data=request.data)
         if serializer.is_valid():
             serializer.save()

@@ -44,11 +44,12 @@ class ProfileDetailSerializer(BaseProfileSerializer):
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(validators=[is_adult_or_old])
-    points = serializers.IntegerField(validators = [is_max])
+    points = serializers.IntegerField(validators = [is_max], read_only = True)
 
     class Meta(object):
         model = Profile
-        fields = ['short_bio', 'birth_date', 'rating', 'points', ]
+        fields = ['short_bio', 'birth_date', 'rating', 'points', 'resume', ]
+        read_only_fields = ['points', 'rating']
 
 
 class PointsSerializer(serializers.ModelSerializer):
