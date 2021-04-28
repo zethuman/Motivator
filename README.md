@@ -33,12 +33,12 @@ Description to this project [here](https://github.com/zethuman/Motivator/blob/ma
   - [x] at least 4 CBV APIView
   - [x] at least 6 ViewSet
   - [x] File Upload views
-- [ ] Django Signals - at least 4 usage
-- [ ] Logging module for each app
+- [x] Django Signals - at least 4 usage
+- [x] Logging module for each app
 - [x] Well structured Postman requests with all implemented methods
   - [x] separated by Folders
   - [x] using Environment variables (ex: token)
-- [ ] GitHub repo with well described Readme.md
+- [x] GitHub repo with well described Readme.md
 
 
    
