@@ -1,13 +1,7 @@
 import datetime
 import logging
-
-from django.db.models import F
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-
 from books_module.models import BookMotivator, Essay
-from main.models import Profile
-from main.serializers import PointsSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +65,7 @@ class EssaySerializer(serializers.Serializer):
     title = serializers.CharField()
     essay = serializers.FileField()
     user_id = serializers.IntegerField(read_only = True)
+    book_id = serializers.IntegerField(read_only = True)
 
     def create(self, validated_data):
         essay = Essay.objects.create(

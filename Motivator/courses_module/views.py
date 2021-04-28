@@ -1,21 +1,15 @@
 import logging
-
-from django.db.models import F
-from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.parsers import FormParser,JSONParser,MultiPartParser
-from rest_framework.exceptions import ValidationError,MethodNotAllowed
-from rest_framework.permissions import IsAuthenticated,IsAdminUser,AllowAny
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.response import Response
 
 from courses_module.models import CourseMotivator,Content,CertificateForCourse
 from courses_module.serializers import CourseSerializer,CourseDetailSerializer,ContentSerializer, \
     ContentDetailSerializer,CourseCertificateDetailSerializer, \
     CourseCertificateSerializer
-from main.models import Profile
-from main.permissions import AdminPermission,HrPermission,MyCustomPermission
-from django.forms.models import model_to_dict
+from main.permissions import MyCustomPermission
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +90,6 @@ def content_by_course(request, pk, ek):
                 return Response(serializer.data)
             else:
                 post_certificate(pk, request.user.id)
-                # update_points(uk = request.user.id)
                 return Response(serializer.data)
         else:
             return Response(serializer.data)
