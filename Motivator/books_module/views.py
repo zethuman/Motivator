@@ -43,7 +43,7 @@ class BookDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class EssayListAPIView(generics.ListCreateAPIView):
     serializer_class = EssaySerializer
     permission_classes = (HrPermission,)
-    parser_classes = [FormParser,MultiPartParser,JSONParser]
+    parser_classes = [FormParser, MultiPartParser, JSONParser]
 
     def get_queryset(self):
         queryset = Essay.objects.get_by_book(books_id=self.kwargs.get('pk'))
@@ -68,10 +68,13 @@ def essays_by_book(request, pk, ek):
     except BookMotivator.DoesNotExist as e:
         return Response({'error': str(e)})
 
+    user = BookMotivator.objects.get(id=pk).user.pk
+    current_user = request.user.pk
+
     if request.method == 'GET':
         serializer = EssayDetailSerializer(essays, many=True)
         return Response(serializer.data)
-    elif request.method == 'PUT' and BookMotivator.objects.get(id=pk).user.pk == request.user.pk:
+    elif request.method == 'PUT' and user == current_user:
         serializer = EssayDetailSerializer(essays.first(), data=request.data)
 
         if serializer.is_valid():
@@ -79,7 +82,7 @@ def essays_by_book(request, pk, ek):
             return Response(serializer.data)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'PATCH' and BookMotivator.objects.get(id=pk).user.pk == request.user.pk:
+    elif request.method == 'PATCH' and user == current_user:
         serializer = EssayDetailSerializer(essays.first(), data=request.data, partial=True)
 
         if serializer.is_valid():

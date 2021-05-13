@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from courses_module.models import CourseMotivator,Content,Certificate,CertificateForCourse
+from courses_module.models import CourseMotivator, Content, Certificate, CertificateForCourse
 
 
 class ContentSerializer(serializers.ModelSerializer):

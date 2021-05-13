@@ -81,10 +81,13 @@ def content_by_course(request, pk, ek):
     except CourseMotivator.DoesNotExist as e:
         return Response({'error': str(e)})
 
+    amount_course = CourseMotivator.objects.get(id=pk).courses_content.count()
+    user_taken_courses = CourseMotivator.objects.get(id = pk).courses_content.filter(user = request.user.id).count()
+
     if request.method == 'GET':
         serializer = ContentDetailSerializer(contents, many=True)
         Content.objects.get(id=ek).user.add(request.user.id)
-        if CourseMotivator.objects.get(id=pk).courses_content.count() == CourseMotivator.objects.get(id = pk).courses_content.filter(user = request.user.id).count():
+        if amount_course == user_taken_courses:
             queryset = CertificateForCourse.objects.filter(course_id = pk)
             if queryset.filter(user_id = request.user.id).exists():
                 return Response(serializer.data)

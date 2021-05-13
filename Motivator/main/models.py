@@ -1,14 +1,8 @@
-import datetime
-
 from django.core.validators import FileExtensionValidator, MaxValueValidator
 from django.db import models
-
 # Create your models here.
 from django.utils import timezone
-from rest_framework.exceptions import PermissionDenied, ValidationError
-
 from auth_.models import MainUser
-import courses_module
 
 
 class BaseModel(models.Model):
@@ -71,13 +65,12 @@ class Profile(models.Model):
     points = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(30000, message="Reached maximum points for this quartal")], verbose_name='Points')
     user = models.OneToOneField(MainUser, on_delete=models.CASCADE)
 
-
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
 
     def __str__(self):
-        return self.short_bio
+        return self.user
 
     def to_json(self):
         return {

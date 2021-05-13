@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 
 from books_module.models import BookMotivator
-from utils.constants import USER_ROLE_HR,USER_ROLE_EMPLOYEE,USER_ROLE_SUPER_USER
+from utils.constants import USER_ROLE_HR, USER_ROLE_EMPLOYEE, USER_ROLE_SUPER_USER
 
 
 class HrPermission(IsAuthenticated):
